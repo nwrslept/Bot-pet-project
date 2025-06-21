@@ -18,13 +18,36 @@ def create_tables():
     # Таблиця підписок
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS subscriptions (
-        user_id INTEGER PRIMARY KEY,        -- той самий telegram_id
-        frequency INTEGER DEFAULT 1,        -- 1, 2 або 3 рази на день
-        topics TEXT DEFAULT '',             -- рядок з темами через кому
-        is_active INTEGER DEFAULT 1,        -- 1 = активна, 0 = відписаний
+        user_id INTEGER PRIMARY KEY,
+        frequency INTEGER DEFAULT 1,
+        topics TEXT DEFAULT '',
+        is_active INTEGER DEFAULT 1,
         FOREIGN KEY(user_id) REFERENCES users(telegram_id)
     );
     """)
 
+    # Таблиця для чат-історії Gemini
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS chat_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        user_message TEXT,
+        bot_response TEXT,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(user_id) REFERENCES users(telegram_id)
+    );
+    """)
+
+    # ✅ Таблиця для збережених ідей
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS generated_ideas (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        difficulty TEXT,
+        idea_text TEXT,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+    """)
+
+    # ✅ Один раз коміт і закриття
     conn.commit()
     conn.close()
