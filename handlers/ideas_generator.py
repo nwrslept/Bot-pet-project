@@ -73,7 +73,7 @@ async def generate_idea(callback: CallbackQuery, state: FSMContext):
         response = model.generate_content(prompt)
         idea = response.text.strip()
 
-        save_idea(topic, difficulty, idea)  # Зберігаємо в загальну БД
+        save_idea(topic, difficulty, idea)
 
         await state.update_data(generated_idea=idea, generated_topic=topic, generated_difficulty=difficulty)
 
@@ -99,7 +99,7 @@ async def save_idea_handler(callback: CallbackQuery, state: FSMContext):
     idea = data.get("generated_idea")
     topic = data.get("generated_topic")
     difficulty = data.get("generated_difficulty")
-    telegram_id = callback.from_user.id  # Ось тут отримуємо ID користувача
+    telegram_id = callback.from_user.id
 
     if not idea or not topic or not difficulty:
         await callback.answer("Немає ідеї для збереження.", show_alert=True)
@@ -108,10 +108,18 @@ async def save_idea_handler(callback: CallbackQuery, state: FSMContext):
     try:
         save_user_idea(telegram_id, topic, difficulty, idea)
         await callback.answer("Ідею збережено ✅", show_alert=True)
-        await callback.message.edit_reply_markup(None)
-        await state.update_data(generated_idea=None, generated_topic=None, generated_difficulty=None)
+
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="🔄 Ще", callback_data="more_idea")]
+        ])
+
+        await callback.message.edit_reply_markup(reply_markup=keyboard)
+
+        await state.update_data(generated_idea=None)
+
     except Exception as e:
         await callback.answer(f"Помилка при збереженні: {e}", show_alert=True)
+
 
 @router.callback_query(F.data == "more_idea")
 async def more_idea_handler(callback: CallbackQuery, state: FSMContext):
