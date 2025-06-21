@@ -4,7 +4,7 @@ def create_tables():
     conn = get_connection()
     cursor = conn.cursor()
 
-    # Таблиця користувачів
+    #таблиця користувачів
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -15,7 +15,7 @@ def create_tables():
     );
     """)
 
-    # Таблиця підписок
+    #таблиця підписок
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS subscriptions (
         user_id INTEGER PRIMARY KEY,
@@ -26,7 +26,7 @@ def create_tables():
     );
     """)
 
-    # Таблиця для чат-історії Gemini
+    #тпаблиця для чат-історії Gemini
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS chat_history (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,7 +38,7 @@ def create_tables():
     );
     """)
 
-    # Таблиця для збережених ідей (всі згенеровані ідеї)
+    #таблиця для збережених ідей (всі згенеровані ідеї)
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS generated_ideas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,7 +49,7 @@ def create_tables():
         );
     """)
 
-    # Таблиця для збережених користувачем ідей
+    #таблиця для збережених користувачем ідей
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS user_saved_ideas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -22,7 +22,6 @@ def save_idea(topic: str, difficulty: str, idea_text: str):
         VALUES (?, ?, ?)
     """, (topic, difficulty, idea_text))
 
-    # Залишаємо тільки останні 20 ідей для кожної теми + складності
     cursor.execute("""
         DELETE FROM generated_ideas
         WHERE id NOT IN (
@@ -83,7 +82,7 @@ def get_user_ideas(telegram_id: int):
     """, (telegram_id,))
     rows = cursor.fetchall()
     conn.close()
-    return rows  # Список кортежів: (id, topic, difficulty, idea_text)
+    return rows
 
 def delete_user_idea(idea_id: int, telegram_id: int):
     conn = sqlite3.connect(DB_PATH)

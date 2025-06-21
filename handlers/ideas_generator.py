@@ -16,12 +16,10 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash-latest")
 
-# Визначаємо стани
 class IdeaGeneration(StatesGroup):
     choosing_topic = State()
     choosing_difficulty = State()
 
-# Старт — вибір теми
 @router.message(F.text == "💡 Згенерувати ідею")
 async def choose_topic(message: Message, state: FSMContext):
     await state.set_state(IdeaGeneration.choosing_topic)
@@ -30,15 +28,12 @@ async def choose_topic(message: Message, state: FSMContext):
         reply_markup=idea_topic_keyboard()
     )
 
-# Вибір складності після вибору теми
 @router.callback_query(F.data.startswith("topic:"), IdeaGeneration.choosing_topic)
 async def choose_difficulty(callback: CallbackQuery, state: FSMContext):
     topic = callback.data.split(":")[1]
 
-    # Зберігаємо тему у FSM
     await state.update_data(topic=topic)
 
-    # Встановлюємо стан вибору складності
     await state.set_state(IdeaGeneration.choosing_difficulty)
 
     await callback.message.edit_text(
@@ -47,7 +42,6 @@ async def choose_difficulty(callback: CallbackQuery, state: FSMContext):
     )
     await callback.answer()
 
-# Генерація ідеї
 @router.callback_query(F.data.startswith("idea:"), IdeaGeneration.choosing_difficulty)
 async def generate_idea(callback: CallbackQuery, state: FSMContext):
     parts = callback.data.split(":")
@@ -112,7 +106,6 @@ async def save_idea_handler(callback: CallbackQuery, state: FSMContext):
         return
 
     try:
-        # Зберігаємо саме у таблицю користувача
         save_user_idea(telegram_id, topic, difficulty, idea)
         await callback.answer("Ідею збережено ✅", show_alert=True)
         await callback.message.edit_reply_markup(None)
@@ -130,7 +123,6 @@ async def more_idea_handler(callback: CallbackQuery, state: FSMContext):
         await callback.answer("Немає даних для генерації нової ідеї.", show_alert=True)
         return
 
-    # Викликаємо функцію генерації, але без FSM станів, тому просто повторюємо код генерації
     previous_ideas = get_ideas_by_topic_and_difficulty(topic, difficulty)
     context = "\n".join(f"- {idea}" for idea in previous_ideas)
 

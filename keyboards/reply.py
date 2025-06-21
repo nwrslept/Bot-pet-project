@@ -7,3 +7,8 @@ def main_menu_keyboard():
         [KeyboardButton(text="📰 Новини")],
 
     ], resize_keyboard=True)
+
+def gemini_left_chat():
+    return ReplyKeyboardMarkup(keyboard=[
+        [KeyboardButton(text="🚪 Покинути чат")],
+    ], resize_keyboard=True)

@@ -33,8 +33,6 @@ dp.include_routers(
 )
 
 
-
-
 async def main():
     create_tables() #створення таблиць
     schedule_jobs(bot) #запуск розсилки

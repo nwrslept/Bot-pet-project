@@ -1,15 +1,13 @@
 from aiogram import Router, F
-from aiogram.types import Message
+from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from keyboards.reply import main_menu_keyboard
-
+from keyboards.reply import main_menu_keyboard, gemini_left_chat
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
-
-# Імпортуємо твої функції з gemini_history.py
 from database.gemini_history import save_message, get_last_messages
+
 
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -26,10 +24,10 @@ class ChatStates(StatesGroup):
 @router.message(F.text == "🤖 Чат з Gemini")
 async def start_chat(message: Message, state: FSMContext):
     await state.set_state(ChatStates.chatting)
-    await message.answer("🧠 Ти в чаті з Gemini. Напиши питання!\nЩоб вийти — /exit")
+    await message.answer("🧠 Ти в чаті з Gemini. Напиши питання!", reply_markup=gemini_left_chat())
 
-@router.message(ChatStates.chatting, F.text == "/exit")
-async def exit_chat(message: Message, state: FSMContext):
+@router.message(F.text == "🚪 Покинути чат")
+async def left_chat(message: Message, state: FSMContext):
     await state.clear()
     await message.answer("🚪 Ти вийшов з чату з Gemini.", reply_markup=main_menu_keyboard())
 
@@ -52,6 +50,7 @@ async def chat_with_gemini(message: Message, state: FSMContext):
 
         # Зберігаємо повідомлення користувача і відповідь Gemini
         save_message(message.from_user.id, user_input, response.text)
+
 
         await message.answer(response.text)
     except Exception as e:

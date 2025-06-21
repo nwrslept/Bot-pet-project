@@ -31,25 +31,22 @@ async def show_profile(message: Message):
     else:
         await message.answer("❌ Тебе немає в базі даних.")
 
-    from aiogram.types import CallbackQuery
 
 @router.callback_query(F.data == "show_saved_ideas")
 async def show_saved_ideas(callback: CallbackQuery):
     telegram_id = callback.from_user.id
-    user_ideas = get_user_ideas(telegram_id)  # функція з твоєї БД, що повертає список ідей
+    user_ideas = get_user_ideas(telegram_id)
 
     if not user_ideas:
         await callback.message.edit_text("У тебе поки немає збережених ідей.")
         await callback.answer()
         return
 
-    # Показуємо кожну ідею з кнопкою "Видалити"
     for idea_id, topic, difficulty, idea_text in user_ideas:
         keyboard = InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="❌ Видалити", callback_data=f"delete_idea:{idea_id}")]
         ])
         text = f"💡 <b>{topic.capitalize()} ({difficulty})</b>:\n{idea_text}"
-        # Надсилаємо нове повідомлення для кожної ідеї
         await callback.message.answer(text, reply_markup=keyboard, parse_mode="HTML")
 
     await callback.answer()
@@ -62,5 +59,4 @@ async def delete_saved_idea(callback: CallbackQuery):
     delete_user_idea(idea_id, telegram_id)
 
     await callback.answer("Ідею видалено ✅", show_alert=True)
-    # Оновлюємо список ідей після видалення
     await show_saved_ideas(callback)
