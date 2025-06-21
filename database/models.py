@@ -38,7 +38,7 @@ def create_tables():
     );
     """)
 
-    # ✅ Таблиця для збережених ідей
+    # Таблиця для збережених ідей (всі згенеровані ідеї)
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS generated_ideas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,6 +49,17 @@ def create_tables():
         );
     """)
 
-    # ✅ Один раз коміт і закриття
+    # Таблиця для збережених користувачем ідей
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS user_saved_ideas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            telegram_id INTEGER,
+            topic TEXT,
+            difficulty TEXT,
+            idea_text TEXT,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+    """)
+
     conn.commit()
     conn.close()
