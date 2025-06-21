@@ -40,12 +40,13 @@ def create_tables():
 
     # ✅ Таблиця для збережених ідей
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS generated_ideas (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        difficulty TEXT,
-        idea_text TEXT,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-    );
+        CREATE TABLE IF NOT EXISTS generated_ideas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            topic TEXT,
+            difficulty TEXT,
+            idea_text TEXT,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
     """)
 
     # ✅ Один раз коміт і закриття
