@@ -10,12 +10,12 @@ async def show_profile(message: Message):
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM users WHERE telegram_id = ?", (message.from_user.id,))
+    cursor.execute("SELECT telegram_id, username, first_name, last_name FROM users WHERE telegram_id = ?",
+                   (message.from_user.id,))
     user = cursor.fetchone()
-    conn.close()
 
     if user:
-        _, telegram_id, username, first_name, last_name = user
+        telegram_id, username, first_name, last_name = user
         text = (
             f"<b>👤 Твій профіль:</b>\n\n"
             f"🆔 Telegram ID: <code>{telegram_id}</code>\n"
