@@ -22,14 +22,15 @@ bot = Bot(
 dp = Dispatcher(storage=MemoryStorage())
 
 #ініціалізація роутерів
-from handlers import start, news, gemini, ideas_generator, user_profile, subscription
+from handlers import start, news, gemini, ideas_generator, user_profile, subscription, language
 dp.include_routers(
     start.router,
     news.router,
     gemini.router,
     ideas_generator.router,
     user_profile.router,
-    subscription.router
+    subscription.router,
+    language.router
 )
 
 

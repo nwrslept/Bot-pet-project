@@ -11,7 +11,8 @@ def create_tables():
         telegram_id INTEGER UNIQUE,
         username TEXT,
         first_name TEXT,
-        last_name TEXT
+        last_name TEXT,
+        language TEXT DEFAULT 'uk'
     );
     """)
 
