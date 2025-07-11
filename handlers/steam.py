@@ -16,36 +16,39 @@ STEAM_API_KEY = os.getenv("STEAM_API_KEY")
 
 
 @router.message(F.text == "🎮 Steam")
-async def steam_main_handler(message: Message):
+async def steam_main_handler(message: Message, state: FSMContext):
     telegram_id = message.from_user.id
     steam_id = get_steam_id(telegram_id)
 
     if not steam_id:
         await message.answer(
             "👋 Схоже, ти ще не додав свій Steam-профіль.\n\n"
-            "Введи свій SteamID64 або посилання на профіль:\n"
+            "🔹 Надішли SteamID64 або посилання на профіль:\n"
+            "▪️ https://steamcommunity.com/id/твій_нік\n"
+            "▪️ https://steamcommunity.com/profiles/цифри"
         )
+        await state.set_state(SteamStates.waiting_for_new_steam_id)
         return
 
-    await message.answer("Оберіть дію:", reply_markup=steam_menu_keyboard())
+    await message.answer("🔧 Оберіть дію:", reply_markup=steam_menu_keyboard())
 
 
 @router.callback_query(F.data == "steam_profile")
 async def show_profile(call: CallbackQuery):
     steam_id = get_steam_id(call.from_user.id)
     if not steam_id:
-        await call.message.answer("Профіль не знайдено, будь ласка, додайте Steam ID.")
+        await call.message.answer("❗ Профіль не знайдено. Додайте Steam ID.")
         return
 
     profile = await get_player_summary(steam_id)
     if not profile:
-        await call.message.answer("Не вдалося отримати інформацію про профіль.")
+        await call.message.answer("🚫 Не вдалося отримати інформацію про профіль.")
         return
 
     name = profile["personaname"]
     avatar = profile["avatarfull"]
     profile_url = profile["profileurl"]
-    status = profile.get("gameextrainfo", "у мережі" if profile["personastate"] else "офлайн")
+    status = profile.get("gameextrainfo", "🕸 офлайн" if profile["personastate"] == 0 else "у мережі")
 
     text = (
         f"👤 <b>{name}</b>\n"
@@ -61,7 +64,7 @@ async def show_profile(call: CallbackQuery):
 @router.callback_query(F.data == "steam_change")
 async def change_steam_profile(call: CallbackQuery, state: FSMContext):
     await call.message.delete()
-    await call.message.answer("Введіть новий SteamID64 або посилання на свій Steam-профіль.", reply_markup=back_to_steam_menu())
+    await call.message.answer("✏️ Введіть новий SteamID64 або посилання на свій Steam-профіль:", reply_markup=back_to_steam_menu())
     await state.set_state(SteamStates.waiting_for_new_steam_id)
     await call.answer()
 
@@ -70,12 +73,13 @@ async def change_steam_profile(call: CallbackQuery, state: FSMContext):
 async def update_steam_profile(message: Message, state: FSMContext):
     steam_input = message.text.strip()
     steam_id = await resolve_steam_input(steam_input)
+
     if not steam_id:
         await message.answer("🚫 Невірне посилання або ID. Спробуйте ще раз.", reply_markup=back_to_steam_menu())
         return
 
     set_steam_id(message.from_user.id, steam_id)
-    await message.answer("✅ Новий Steam-профіль збережено!", reply_markup=back_to_steam_menu())
+    await message.answer("✅ Новий Steam-профіль збережено!", reply_markup=steam_menu_keyboard())
     await state.clear()
 
 
@@ -83,7 +87,7 @@ async def update_steam_profile(message: Message, state: FSMContext):
 async def show_friends(call: CallbackQuery):
     steam_id = get_steam_id(call.from_user.id)
     if not steam_id:
-        await call.message.answer("Профіль не знайдено, будь ласка, додайте Steam ID.", reply_markup=back_to_steam_menu())
+        await call.message.answer("❗ Профіль не знайдено. Додайте Steam ID.", reply_markup=back_to_steam_menu())
         await call.answer()
         return
 
@@ -94,7 +98,6 @@ async def show_friends(call: CallbackQuery):
     friend_ids = await get_friends(steam_id)
     if not friend_ids:
         await call.message.answer("⚠️ Не вдалося отримати список друзів. Можливо, профіль або список друзів приватні.", reply_markup=back_to_steam_menu())
-        await call.answer()
         return
 
     players = await get_player_statuses(friend_ids[:100])
@@ -104,8 +107,7 @@ async def show_friends(call: CallbackQuery):
     ]
 
     text = "\n".join(online) if online else "😴 Ніхто з друзів не в мережі"
-    await call.message.answer("👥 Ось хто зараз онлайн:\n\n" + text, reply_markup=back_to_steam_menu())
-    await call.answer()
+    await call.message.answer("👥 Онлайн друзі:\n\n" + text, reply_markup=back_to_steam_menu())
 
 
 async def resolve_steam_input(input_str: str) -> str | None:
@@ -133,9 +135,9 @@ async def resolve_vanity(vanity_url: str) -> str | None:
                 return data["response"]["steamid"]
             return None
 
+
 @router.callback_query(F.data == "steam_back")
 async def back_to_menu(call: CallbackQuery):
     await call.message.delete()
-    await call.message.answer("Оберіть дію:", reply_markup=steam_menu_keyboard())
+    await call.message.answer("🔧 Оберіть дію:", reply_markup=steam_menu_keyboard())
     await call.answer()
-
