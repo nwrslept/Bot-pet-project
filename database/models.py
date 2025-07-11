@@ -12,7 +12,8 @@ def create_tables():
         username TEXT,
         first_name TEXT,
         last_name TEXT,
-        language TEXT DEFAULT 'uk'
+        language TEXT DEFAULT 'uk',
+        steam_id TEXT
     );
     """)
 

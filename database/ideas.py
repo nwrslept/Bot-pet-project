@@ -1,7 +1,6 @@
 import sqlite3
-from datetime import datetime
 
-DB_PATH = "bot_database.db"  # або імпортуй з config, якщо маєш
+DB_PATH = "bot_database.db"
 
 def save_idea(topic: str, difficulty: str, idea_text: str):
     conn = sqlite3.connect(DB_PATH)
