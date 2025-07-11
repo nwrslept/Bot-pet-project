@@ -23,3 +23,13 @@ async def get_player_statuses(steam_ids: list[str]):
         async with session.get(url, params=params) as resp:
             data = await resp.json()
             return data.get("response", {}).get("players", [])
+
+async def get_player_summary(steam_id: str) -> dict | None:
+    url = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/"
+    params = {"key": STEAM_API_KEY, "steamids": steam_id}
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url, params=params) as resp:
+            data = await resp.json()
+            players = data.get("response", {}).get("players", [])
+            return players[0] if players else None

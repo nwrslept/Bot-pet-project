@@ -1,7 +1,6 @@
 import sqlite3
 
-DB_PATH = "bot_database.db"
-
+# задати steamID
 def set_steam_id(telegram_id: int, steam_id: str):
     conn = sqlite3.connect("bot_database.db")
     cursor = conn.cursor()
@@ -13,7 +12,7 @@ def set_steam_id(telegram_id: int, steam_id: str):
     conn.commit()
     conn.close()
 
-# Отримати Steam ID
+# отримати Steam ID
 def get_steam_id(telegram_id: int) -> str | None:
     conn = sqlite3.connect("bot_database.db")
     cursor = conn.cursor()

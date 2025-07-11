@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from database.db import get_connection
 from database.ideas import get_user_ideas, delete_user_idea
-from lang.messages import t, get_user_language  # <-- імпортуємо переклад
+from lang.messages import t, get_user_language
 
 router = Router()
 
