@@ -105,6 +105,18 @@ MESSAGES = {
         "steam.menu.change": "✏️ Змінити посилання",
         "steam.menu.friends": "👥 Список друзів",
         "steam.menu.back": "🔙 Назад до меню",
+        "steam.menu.free_games": "🎁 Безкоштовні ігри",
+        "steam.menu.random_free": "🎲 Рандомна гра",
+        "steam.menu.subscribe_free": "📩 Отримувати роздачі",
+        "steam.no_free_games": "🚫 Наразі немає безкоштовних ігор.",
+        "steam.more_free": "🔁 Ще",
+        "steam.subscribe_button": "Отримувати роздачі",
+        "steam.unsubscribe_success":"Ви відписались",
+        "steam.subscribe_success": "Ви підписались",
+        "steam.daily_free_games":"🎮 Безкоштовні роздачі ігор",
+
+
+
 
 
 
@@ -211,7 +223,17 @@ MESSAGES = {
         "steam.menu.profile": "👤 My Profile",
         "steam.menu.change": "✏️ Change Link",
         "steam.menu.friends": "👥 Friend List",
-        "steam.menu.back": "🔙 Back to Menu",
+        "steam.menu.back": "🔙 Back to menu",
+        "steam.menu.free_games": "🎁 Free games",
+        "steam.menu.random_free": "🎲 Random game",
+        "steam.menu.subscribe_free": "📩 Receive giveaways",
+        "steam.no_free_games": "🚫 There are no free games currently.",
+        "steam.more_free": "🔁 More",
+        "steam.subscribe_button": "Receive giveaways",
+        "steam.unsubscribe_success": "You have unsubscribed",
+        "steam.subscribe_success": "You have subscribed",
+        "steam.daily_free_games":"🎮 Free game giveaways",
+
 
 
     },

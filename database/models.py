@@ -4,7 +4,7 @@ def create_tables():
     conn = get_connection()
     cursor = conn.cursor()
 
-    #таблиця користувачів
+    # Таблиця користувачів
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -17,18 +17,19 @@ def create_tables():
     );
     """)
 
-    #таблиця підписок
+    # Таблиця підписок
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS subscriptions (
         user_id INTEGER PRIMARY KEY,
         frequency INTEGER DEFAULT 1,
         topics TEXT DEFAULT '',
         is_active INTEGER DEFAULT 1,
-        FOREIGN KEY(user_id) REFERENCES users(telegram_id)
+        is_steam_subscribed INTEGER DEFAULT 0,
+        FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
     );
     """)
 
-    #тпаблиця для чат-історії Gemini
+    # Таблиця для чат-історії Gemini
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS chat_history (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,31 +37,31 @@ def create_tables():
         user_message TEXT,
         bot_response TEXT,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY(user_id) REFERENCES users(telegram_id)
+        FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
     );
     """)
 
-    #таблиця для збережених ідей (всі згенеровані ідеї)
+    # Таблиця для збережених згенерованих ідей
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS generated_ideas (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            topic TEXT,
-            difficulty TEXT,
-            idea_text TEXT,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-        );
+    CREATE TABLE IF NOT EXISTS generated_ideas (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        topic TEXT,
+        difficulty TEXT,
+        idea_text TEXT,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
     """)
 
-    #таблиця для збережених користувачем ідей
+    # Таблиця для збережених користувачем ідей
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS user_saved_ideas (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            telegram_id INTEGER,
-            topic TEXT,
-            difficulty TEXT,
-            idea_text TEXT,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-        );
+    CREATE TABLE IF NOT EXISTS user_saved_ideas (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        telegram_id INTEGER,
+        topic TEXT,
+        difficulty TEXT,
+        idea_text TEXT,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
     """)
 
     conn.commit()

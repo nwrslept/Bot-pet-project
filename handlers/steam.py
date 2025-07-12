@@ -1,15 +1,24 @@
+import random
+
 from aiogram import Router, F
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.context import FSMContext
+
+from database.subscriptions import (
+    is_user_steam_subscribed,
+    update_steam_subscription,
+)
 from lang.messages import t, get_user_language
 from database.steam import set_steam_id, get_steam_id
 from handlers.steam_api import get_friends, get_player_statuses, get_player_summary
-from keyboards.inline.steam import steam_menu_keyboard, back_to_steam_menu
+from keyboards.inline.steam import steam_menu_keyboard, back_to_steam_menu, steam_free_games_menu
 from states.states import SteamStates
 import re
 import aiohttp
 import os
 from dotenv import load_dotenv
+
+from utils.free_games import get_free_steam_games
 
 router = Router()
 load_dotenv()
@@ -145,3 +154,57 @@ async def resolve_vanity(vanity_url: str) -> str | None:
             if data["response"]["success"] == 1:
                 return data["response"]["steamid"]
             return None
+
+
+@router.callback_query(F.data == "steam_free_games")
+async def open_free_games_menu(call: CallbackQuery):
+    telegram_id = call.from_user.id
+    lang = get_user_language(telegram_id)
+    keyboard = steam_free_games_menu(lang, telegram_id)  # без await
+    await call.message.delete()
+    await call.message.answer(t(lang, "steam.choose_action"), reply_markup=keyboard)
+    await call.answer()
+
+
+
+
+
+@router.callback_query(F.data == "steam_random_free")
+async def send_random_free_game(call: CallbackQuery):
+    lang = get_user_language(call.from_user.id)
+
+    games = await get_free_steam_games()
+    if not games:
+        await call.message.answer(t(lang, "steam.no_free_games"), reply_markup=back_to_steam_menu(lang))
+        return
+
+    game = random.choice(games)
+
+    text = f"<b>{game['name']}</b>\n🔗 {game['url']}"
+    buttons = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text=t(lang, "steam.more_free"), callback_data="steam_random_free")],
+        [InlineKeyboardButton(text=t(lang, "steam.menu.back"), callback_data="steam_back")]
+    ])
+    await call.message.delete()
+    await call.message.answer_photo(photo=game["image"], caption=text, parse_mode="HTML", reply_markup=buttons)
+    await call.answer()
+
+
+@router.callback_query(F.data == "steam_subscribe_free")
+async def toggle_steam_subscription(call: CallbackQuery):
+    telegram_id = call.from_user.id
+    lang = get_user_language(telegram_id)
+
+    subscribed = is_user_steam_subscribed(telegram_id)
+    if subscribed:
+        update_steam_subscription(telegram_id, False)
+        text = t(lang, "steam.unsubscribe_success")
+    else:
+        update_steam_subscription(telegram_id, True)
+        text = t(lang, "steam.subscribe_success")
+
+    new_keyboard = steam_free_games_menu(lang, telegram_id)
+
+    await call.message.edit_reply_markup(reply_markup=new_keyboard)
+    await call.answer(text, show_alert=True)
+
