@@ -1,14 +1,16 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from lang.messages import t
 
-def steam_menu_keyboard():
+def steam_menu_keyboard(lang: str) -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="👤 Мій профіль", callback_data="steam_profile")],
-        [InlineKeyboardButton(text="✏️ Змінити посилання", callback_data="steam_change")],
-        [InlineKeyboardButton(text="👥 Список друзів", callback_data="steam_friends")]
+        [InlineKeyboardButton(text=t(lang, "steam.menu.profile"), callback_data="steam_profile")],
+        [InlineKeyboardButton(text=t(lang, "steam.menu.change"), callback_data="steam_change")],
+        [InlineKeyboardButton(text=t(lang, "steam.menu.friends"), callback_data="steam_friends")]
     ])
     return keyboard
 
-def back_to_steam_menu():
+
+def back_to_steam_menu(lang: str) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🔙 Назад до меню", callback_data="steam_back")]
+        [InlineKeyboardButton(text=t(lang, "steam.menu.back"), callback_data="steam_back")]
     ])
