@@ -7,7 +7,7 @@ import os
 from dotenv import load_dotenv
 import google.generativeai as genai
 from database.gemini_history import save_message, get_last_messages
-from lang.messages import t, get_user_language  # <- імпорт перекладу і отримання мови
+from lang.messages import t, get_user_language
 
 
 load_dotenv()
