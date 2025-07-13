@@ -27,33 +27,46 @@ This is a Telegram bot that combines several useful features:
 - Asynchronous requests (aiohttp or requests)
 - Translation system for multi-language support
 
-## Installation
+## 🔧 Installation
 
-1. Clone the repository:
-   
-   git clone https://github.com/your-username/repository-name.git  
-   cd repository-name
+1. **Clone the repository:**
 
-2. Create and activate a virtual environment:
+```bash
+git clone https://github.com/nwrslwpt/Bot-pet-project.git  
+cd repository-name
+```
 
-   python -m venv .venv  
-   source .venv/bin/activate  # Linux/macOS  
-   .venv\Scripts\activate     # Windows
+2. **Create and activate a virtual environment:**
 
-3. Install dependencies:
+```bash
+# Linux/macOS
+python -m venv .venv
+source .venv/bin/activate
 
-   pip install -r requirements.txt
+# Windows
+.venv\Scripts\activate
+```
 
-4. Configure environment variables in a `.env` file (create this file in the project root):
+3. **Install dependencies:**
 
-   BOT_TOKEN=your_bot_token  
-   GEMINI_API_KEY=your_gemini_api_key  
-   STEAM_API_KEY=your_steam_api_key  
-   DB_PATH=path_to_database (e.g., ./bot.db)
+```bash
+pip install -r requirements.txt
+```
 
-5. Run the bot:
+4. **Configure environment variables in a `.env` file (create this file in the project root):**
 
-   python main.py
+```env
+BOT_TOKEN=your_bot_token
+GEMINI_API_KEY=your_gemini_api_key
+STEAM_API_KEY=your_steam_api_key
+DB_PATH=./bot.db
+```
+
+5. **Run the bot:**
+
+```bash
+python main.py
+```
 
 ## Usage
 
